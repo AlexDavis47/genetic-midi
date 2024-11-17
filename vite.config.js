@@ -4,6 +4,7 @@ import { defineConfig } from "vite"
 
 export default defineConfig({
   plugins: [react()],
+    base: "/genetic-midi/",
   resolve: {
     alias: {
       // eslint-disable-next-line no-undef

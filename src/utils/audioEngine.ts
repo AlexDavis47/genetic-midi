@@ -35,7 +35,7 @@
         };
 
         this.buffers = {
-            kick: createTone(60),    // Low frequency for kick
+            kick: createTone(80),    // Low frequency for kick
             snare: createTone(200),  // Mid frequency for snare
             hihat: createTone(2000), // High frequency for hihat
             openhat: createTone(1500) // Slightly lower for open hihat
