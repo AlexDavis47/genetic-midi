@@ -12,11 +12,26 @@ const DrumPatternInterface = () => {
     const [currentGeneration, setCurrentGeneration] = useState(1);
     const [selectedPattern, setSelectedPattern] = useState(0);
     const [population, setPopulation] = useState<Population[]>([]);
+    const [currentStep, setCurrentStep] = useState(-1);
 
     useEffect(() => {
         const initialPopulation = generateInitialPopulation(16);
         setPopulation(initialPopulation);
     }, []);
+
+    // Update playhead position
+    useEffect(() => {
+        if (isPlaying) {
+            const intervalId = setInterval(() => {
+                setCurrentStep((prev) => (prev + 1) % 16);
+            }, (60 / 120) * 1000 / 4); // Sync with tempo (120 BPM)
+
+            return () => {
+                clearInterval(intervalId);
+                setCurrentStep(-1);
+            };
+        }
+    }, [isPlaying]);
 
     const handlePlayPause = async () => {
         if (population.length === 0) return;
@@ -56,77 +71,150 @@ const DrumPatternInterface = () => {
                     <p className="text-slate-600">Generation {currentGeneration}</p>
                 </div>
 
-                <Card className="w-full">
-                    <CardHeader>
-                        <CardTitle>Pattern Viewer</CardTitle>
-                        <CardDescription>
-                            Pattern {selectedPattern + 1}/16
-                        </CardDescription>
-                    </CardHeader>
-                    <CardContent>
-                        <div className="space-y-4">
-                            {/* Pattern Grid */}
-                            <div className="relative overflow-x-auto">
-                                <table className="w-full">
-                                    <thead>
-                                    <tr>
-                                        <th className="w-24 px-2 py-1 text-left">Instrument</th>
-                                        {Array.from({ length: 16 }, (_, i) => (
-                                            <th key={i} className="w-12 px-1 py-1 text-center text-sm">
-                                                {i + 1}
-                                            </th>
-                                        ))}
-                                    </tr>
-                                    </thead>
-                                    <tbody>
-                                    {instruments.map((instrument) => (
-                                        <tr key={instrument}>
-                                            <td className="px-2 py-1 font-medium capitalize">
-                                                {instrument}
-                                            </td>
-                                            {population[selectedPattern]?.pattern[instrument]?.map((velocity, i) => (
-                                                <td key={i} className="px-1 py-1">
-                                                    <div
-                                                        className={`w-full h-8 ${getVelocityColor(velocity)} rounded-sm 
-                                ${i % 4 === 0 ? 'border-l-2 border-slate-400' : ''}`}
-                                                        title={`Velocity: ${velocity}`}
-                                                    />
-                                                </td>
+                {/* Main Content Grid */}
+                <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                    {/* Pattern Viewer */}
+                    <Card className="lg:col-span-2">
+                        <CardHeader>
+                            <CardTitle>Pattern Viewer</CardTitle>
+                            <CardDescription>
+                                Pattern {selectedPattern + 1}/16
+                            </CardDescription>
+                        </CardHeader>
+                        <CardContent>
+                            <div className="space-y-4">
+                                {/* Pattern Grid */}
+                                <div className="relative overflow-x-auto">
+                                    <table className="w-full">
+                                        <thead>
+                                        <tr>
+                                            <th className="w-24 px-2 py-1 text-left">Instrument</th>
+                                            {Array.from({ length: 16 }, (_, i) => (
+                                                <th key={i} className="w-12 px-1 py-1 text-center text-sm">
+                                                    {i + 1}
+                                                </th>
                                             ))}
                                         </tr>
-                                    ))}
-                                    </tbody>
-                                </table>
-                            </div>
+                                        </thead>
+                                        <tbody>
+                                        {instruments.map((instrument) => (
+                                            <tr key={instrument}>
+                                                <td className="px-2 py-1 font-medium capitalize">
+                                                    {instrument}
+                                                </td>
+                                                {population[selectedPattern]?.pattern[instrument]?.map((velocity, i) => (
+                                                    <td key={i} className="px-1 py-1 relative">
+                                                        <div
+                                                            className={`w-full h-8 ${getVelocityColor(velocity)} rounded-sm
+                                  ${i % 4 === 0 ? 'border-l-2 border-slate-400' : ''}
+                                  ${currentStep === i ? 'ring-2 ring-offset-2 ring-blue-500' : ''}`}
+                                                            title={`Velocity: ${velocity}`}
+                                                        />
+                                                    </td>
+                                                ))}
+                                            </tr>
+                                        ))}
+                                        </tbody>
+                                    </table>
+                                </div>
 
-                            {/* Playback Controls */}
-                            <div className="flex items-center justify-center space-x-4">
-                                <Button
-                                    variant="outline"
-                                    size="icon"
-                                    onClick={handlePlayPause}
-                                >
-                                    {isPlaying ? <Square className="h-4 w-4" /> : <Play className="h-4 w-4" />}
-                                </Button>
-                                <Button
-                                    variant="outline"
-                                    size="icon"
-                                    onClick={handleNextPattern}
-                                >
-                                    <SkipForward className="h-4 w-4" />
-                                </Button>
-                            </div>
+                                {/* Playback Controls */}
+                                <div className="flex items-center justify-center space-x-4">
+                                    <Button
+                                        variant="outline"
+                                        size="icon"
+                                        onClick={handlePlayPause}
+                                    >
+                                        {isPlaying ? <Square className="h-4 w-4" /> : <Play className="h-4 w-4" />}
+                                    </Button>
+                                    <Button
+                                        variant="outline"
+                                        size="icon"
+                                        onClick={handleNextPattern}
+                                    >
+                                        <SkipForward className="h-4 w-4" />
+                                    </Button>
+                                </div>
 
-                            {/* Pattern Rating */}
-                            <div className="space-y-2">
-                                <p className="text-sm font-medium">Rate this pattern:</p>
-                                <Slider
-                                    defaultValue={[0]}
-                                    max={10}
-                                    step={1}
-                                    onValueChange={handlePatternRating}
-                                />
+                                {/* Pattern Rating */}
+                                <div className="space-y-2">
+                                    <p className="text-sm font-medium">Rate this pattern:</p>
+                                    <Slider
+                                        defaultValue={[0]}
+                                        max={10}
+                                        step={1}
+                                        onValueChange={handlePatternRating}
+                                    />
+                                </div>
                             </div>
+                        </CardContent>
+                    </Card>
+
+                    {/* Controls Panel */}
+                    <Card>
+                        <CardHeader>
+                            <CardTitle>Controls</CardTitle>
+                        </CardHeader>
+                        <CardContent>
+                            <Tabs defaultValue="parameters">
+                                <TabsList className="w-full">
+                                    <TabsTrigger value="parameters" className="flex-1">Parameters</TabsTrigger>
+                                    <TabsTrigger value="evolution" className="flex-1">Evolution</TabsTrigger>
+                                </TabsList>
+                                <TabsContent value="parameters" className="space-y-4">
+                                    <div className="space-y-4">
+                                        <div>
+                                            <label className="text-sm font-medium">Mutation Rate</label>
+                                            <Slider
+                                                defaultValue={[5]}
+                                                max={10}
+                                                step={1}
+                                                className="w-full"
+                                            />
+                                        </div>
+                                        <div>
+                                            <label className="text-sm font-medium">Crossover Rate</label>
+                                            <Slider
+                                                defaultValue={[7]}
+                                                max={10}
+                                                step={1}
+                                                className="w-full"
+                                            />
+                                        </div>
+                                    </div>
+                                </TabsContent>
+                                <TabsContent value="evolution" className="space-y-4">
+                                    <Button className="w-full">
+                                        Generate New Generation
+                                    </Button>
+                                    <Button variant="outline" className="w-full">
+                                        Reset Evolution
+                                    </Button>
+                                </TabsContent>
+                            </Tabs>
+                        </CardContent>
+                    </Card>
+                </div>
+
+                {/* Pattern Browser */}
+                <Card>
+                    <CardHeader>
+                        <CardTitle>Pattern Browser</CardTitle>
+                        <CardDescription>View and select patterns from the current generation</CardDescription>
+                    </CardHeader>
+                    <CardContent>
+                        <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-8 gap-4">
+                            {population.map((pattern, index) => (
+                                <Button
+                                    key={pattern.id}
+                                    variant={selectedPattern === index ? "default" : "outline"}
+                                    className="w-full h-24 flex flex-col items-center justify-center"
+                                    onClick={() => setSelectedPattern(index)}
+                                >
+                                    <span className="text-lg font-bold">{index + 1}</span>
+                                    <span className="text-sm">Rating: {pattern.rating}/10</span>
+                                </Button>
+                            ))}
                         </div>
                     </CardContent>
                 </Card>
