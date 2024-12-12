@@ -24,9 +24,9 @@ export const DRUM_PARAMS = {
 
 export const GA_PARAMS = {
     populationSize: 16,
-    mutationRate: 0.05, // Will be divided by 10 from UI value
-    crossoverRate: 0.7, // Will be divided by 10 from UI value
-    elitismCount: 2,
+    mutationRate: 0.05,
+    crossoverRate: 0.7,
+    elitismCount: 3,
     fitnessRules: {
         kickOnDownbeat: 2,
         snareOnUpbeat: 2,
