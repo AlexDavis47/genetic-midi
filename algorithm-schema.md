@@ -18,10 +18,10 @@ const DRUM_PARAMS = {
         accent: 127    // Strong accent
     },
 
-    // Standard beat division
+    // Rhythm parameters, could be changed by user
     stepsPerBar: 16,   // 16th note resolution
-    beatsPerBar: 4,
-    totalBars: 1
+    beatsPerBar: 4,   // 4/4 time signature
+    totalBars: 1    // Single bar pattern
 }
 ```
 
@@ -29,10 +29,12 @@ const DRUM_PARAMS = {
 
 ```javascript
 type DrumPattern = {
+    // Based on rhythm parameters, showing a simple 4/4 16th note pattern for reference
     kick:    [0,0,0,0, 0,0,0,0, 0,0,0,0, 0,0,0,0],  // 0-127 values
     snare:   [0,0,0,0, 0,0,0,0, 0,0,0,0, 0,0,0,0],  // 0-127 values
     hihat:   [0,0,0,0, 0,0,0,0, 0,0,0,0, 0,0,0,0],  // 0-127 values
     openhat: [0,0,0,0, 0,0,0,0, 0,0,0,0, 0,0,0,0]   // 0-127 values
+    // More instruments could be added here
 }
 ```
 ## Genetic Algorithm Parameters
