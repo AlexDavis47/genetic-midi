@@ -2,7 +2,6 @@
 import { Button } from "./ui/button";
 import { Slider } from "./ui/slider";
 import { Input } from "./ui/input";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "./ui/select";
 
 const PatternControls = ({
                              onNewGeneration,
@@ -34,7 +33,7 @@ const PatternControls = ({
                     <Slider
                         value={[mutationRate]}
                         max={10}
-                        step={1}
+                        step={0.1}
                         className="w-full"
                         onValueChange={onMutationChange}
                     />
@@ -44,7 +43,7 @@ const PatternControls = ({
                     <Slider
                         value={[crossoverRate]}
                         max={10}
-                        step={1}
+                        step={0.1}
                         className="w-full"
                         onValueChange={onCrossoverChange}
                     />
@@ -81,35 +80,6 @@ const PatternControls = ({
                         max="300"
                         className="mt-2"
                     />
-                </div>
-                <div>
-                    <label className="text-sm font-medium">Time Signature</label>
-                    <Select value={timeSignature} onValueChange={onTimeSignatureChange}>
-                        <SelectTrigger>
-                            <SelectValue />
-                        </SelectTrigger>
-                        <SelectContent>
-                            <SelectItem value="3/4">3/4</SelectItem>
-                            <SelectItem value="4/4">4/4</SelectItem>
-                            <SelectItem value="5/4">5/4</SelectItem>
-                            <SelectItem value="6/8">6/8</SelectItem>
-                            <SelectItem value="7/8">7/8</SelectItem>
-                        </SelectContent>
-                    </Select>
-                </div>
-                <div>
-                    <label className="text-sm font-medium">Steps Per Beat</label>
-                    <Select value={stepsPerBeat} onValueChange={onStepsPerBeatChange}>
-                        <SelectTrigger>
-                            <SelectValue />
-                        </SelectTrigger>
-                        <SelectContent>
-                            <SelectItem value="2">2 (8th notes)</SelectItem>
-                            <SelectItem value="3">3 (triplets)</SelectItem>
-                            <SelectItem value="4">4 (16th notes)</SelectItem>
-                            <SelectItem value="6">6 (sextuplets)</SelectItem>
-                        </SelectContent>
-                    </Select>
                 </div>
             </TabsContent>
         </Tabs>

@@ -63,7 +63,7 @@ class DrumPlayer {
         Tone.Transport.start();
     }
 
-    stop() {
+    async stop() {
         if (!this.playing) return;
         this.playing = false;
         Tone.Transport.stop();
@@ -91,6 +91,7 @@ class DrumPlayer {
         for (const [instrument, note] of Object.entries(DRUM_PARAMS.instruments)) {
             const velocity = this.pattern[instrument][this.step];
             if (velocity > 0) {
+                console.log("Playing", instrument, note, velocity);
                 this.sampler.triggerAttackRelease(
                     note,
                     1,
